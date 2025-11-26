@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>THIRU GROUP - Fiber Optic Coupler Loss Calculator</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        :root {
+            --primary: #2575fc;
+            --secondary: #6a11cb;
+            --accent: #ff3860;
+            --light: #f5f9ff;
+            --dark: #333;
+            --gray: #666;
+            --white: #fff;
+            --shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            --radius: 12px;
+        }
+        
+        body {
+            background: linear-gradient(135deg, var(--secondary) 0%, var(--primary) 100%);
+            color: var(--dark);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 16px;
+        }
+        
+        .container {
+            background-color: var(--white);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            width: 100%;
+            max-width: 480px;
+            overflow: hidden;
+        }
+        
+        header {
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            color: var(--white);
+            padding: 20px;
+            text-align: center;
+            position: relative;
+        }
+        
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        
+        .logo i {
+            font-size: 1.5rem;
+        }
+        
+        .subtitle {
+            font-size: 0.95rem;
+            opacity: 0.9;
+            font-weight: 500;
+        }
+        
+        .calculator {
+            padding: 20px;
+        }
+        
+        .card {
+            background: var(--white);
+            border-radius: var(--radius);
+            padding: 18px;
+            margin-bottom: 20px;
+            box-shadow: var(--shadow);
+            border: 1px solid rgba(0, 0, 0, 0.05);
+        }
+        
+        .card-title {
+            color: var(--primary);
+            font-size: 1.1rem;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .card-title i {
+            font-size: 1rem;
+        }
+        
+        .select-container {
+            position: relative;
+            margin-bottom: 16px;
+        }
+        
+        .coupler-select {
+            width: 100%;
+            padding: 14px 16px;
+            border: 2px solid var(--primary);
+            border-radius: 8px;
+            background-color: var(--white);
+            color: var(--dark);
+            font-size: 1rem;
+            font-weight: 600;
+            appearance: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .coupler-select:focus {
+            outline: none;
+            border-color: var(--secondary);
+            box-shadow: 0 0 0 3px rgba(37, 117, 252, 0.2);
+        }
+        
+        .select-arrow {
+            position: absolute;
+            right: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--primary);
+            pointer-events: none;
+        }
+        
+        .input-control {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 10px;
+        }
+        
+        .input-value {
+            width: 120px;
+            padding: 12px;
+            border: 2px solid var(--primary);
+            border-radius: 8px;
+            text-align: center;
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: var(--primary);
+            background: var(--light);
+        }
+        
+        .input-btn {
+            width: 44px;
+            height: 44px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.5rem;
+            font-weight: bold;
+            background-color: var(--primary);
+            color: var(--white);
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            margin: 0 10px;
+            transition: all 0.3s ease;
+        }
+        
+        .input-btn:hover {
+            background-color: #1a68e8;
+        }
+        
+        .result-section {
+            background: linear-gradient(135deg, var(--light) 0%, #e6f0ff 100%);
+            border-radius: var(--radius);
+            padding: 20px;
+            margin-top: 10px;
+            box-shadow: var(--shadow);
+        }
+        
+        .result-title {
+            color: var(--primary);
+            margin-bottom: 16px;
+            text-align: center;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        
+        .loss-values {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+        
+        .loss-value {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: var(--white);
+            padding: 16px;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+        
+        .loss-info {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .loss-label {
+            font-size: 0.9rem;
+            color: var(--gray);
+            margin-bottom: 4px;
+        }
+        
+        .loss-amount {
+            font-size: 1.6rem;
+            font-weight: bold;
+            color: var(--primary);
+        }
+        
+        .loss-amount.negative {
+            color: var(--accent);
+        }
+        
+        .loss-unit {
+            font-size: 0.9rem;
+            color: var(--gray);
+            margin-top: 4px;
+        }
+        
+        .coupler-table-container {
+            overflow-x: auto;
+            margin-top: 20px;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+        }
+        
+        .coupler-table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 400px;
+        }
+        
+        .coupler-table th {
+            background-color: var(--primary);
+            color: var(--white);
+            padding: 14px 12px;
+            text-align: center;
+            font-weight: 600;
+        }
+        
+        .coupler-table td {
+            padding: 12px 10px;
+            text-align: center;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        
+        .coupler-table tr:nth-child(even) {
+            background-color: var(--light);
+        }
+        
+        .coupler-table tr:hover {
+            background-color: #e6f0ff;
+        }
+        
+        .selected-row {
+            background-color: #d4e4ff !important;
+            font-weight: bold;
+        }
+        
+        .footer {
+            text-align: center;
+            padding: 16px;
+            color: var(--gray);
+            font-size: 0.85rem;
+            border-top: 1px solid #eee;
+            margin-top: 10px;
+        }
+        
+        /* Mobile-specific adjustments */
+        @media (max-width: 480px) {
+            .calculator {
+                padding: 16px;
+            }
+            
+            .card {
+                padding: 16px;
+            }
+            
+            .input-value {
+                width: 100px;
+                font-size: 1.2rem;
+            }
+            
+            .loss-amount {
+                font-size: 1.4rem;
+            }
+        }
+        
+        @media (max-width: 360px) {
+            .logo {
+                font-size: 1.5rem;
+            }
+            
+            .input-control {
+                flex-direction: column;
+                gap: 12px;
+            }
+            
+            .input-btn {
+                margin: 0;
+            }
+            
+            .loss-value {
+                flex-direction: column;
+                text-align: center;
+                gap: 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">
+                <i class="fas fa-fiber"></i>
+                THIRU GROUP
+            </div>
+            <p class="subtitle">Fiber Optic Coupler Loss Calculator</p>
+        </header>
+        
+        <div class="calculator">
+            <div class="card">
+                <h3 class="card-title">
+                    <i class="fas fa-sliders-h"></i>
+                    Coupler Type
+                </h3>
+                <div class="select-container">
+                    <select class="coupler-select" id="coupler-select">
+                        <option value="0">50/50 Coupler</option>
+                        <option value="1">10/90 Coupler</option>
+                        <option value="2">45/55 Coupler</option>
+                        <option value="3">05/95 Coupler</option>
+                        <option value="4">40/60 Coupler</option>
+                        <option value="5">1x4 Splitter</option>
+                        <option value="6">35/65 Coupler</option>
+                        <option value="7">1x8 Splitter</option>
+                        <option value="8">30/70 Coupler</option>
+                        <option value="9">1x16 Splitter</option>
+                        <option value="10">25/75 Coupler</option>
+                        <option value="11">1x32 Splitter</option>
+                        <option value="12">20/80 Coupler</option>
+                        <option value="13">1x64 Splitter</option>
+                        <option value="14">15/85 Coupler</option>
+                        <option value="15">2/98 Coupler</option>
+                        <option value="16">1/99 Coupler</option>
+                        <option value="17">1x128 Splitter</option>
+                    </select>
+                    <div class="select-arrow">
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card">
+                <h3 class="card-title">
+                    <i class="fas fa-broadcast-tower"></i>
+                    Input Power (dBm)
+                </h3>
+                <div class="input-control">
+                    <button class="input-btn" id="decrease-btn">-</button>
+                    <input type="number" class="input-value" id="input-value" value="10" step="0.1">
+                    <button class="input-btn" id="increase-btn">+</button>
+                </div>
+                <p style="text-align: center; color: var(--gray); font-size: 0.85rem; margin-top: 8px;">
+                    Adjust input power to calculate output loss
+                </p>
+            </div>
+            
+            <div class="result-section">
+                <h2 class="result-title">
+                    <i class="fas fa-calculator"></i>
+                    Output Power Calculation
+                </h2>
+                <div class="loss-values">
+                    <div class="loss-value">
+                        <div class="loss-info">
+                            <div class="loss-label" id="port-a-name">Port A</div>
+                            <div class="loss-amount" id="loss-a">6.8</div>
+                            <div class="loss-unit">dBm</div>
+                        </div>
+                        <i class="fas fa-fiber" style="color: var(--primary); font-size: 1.8rem;"></i>
+                    </div>
+                    <div class="loss-value">
+                        <div class="loss-info">
+                            <div class="loss-label" id="port-b-name">Port B</div>
+                            <div class="loss-amount" id="loss-b">6.8</div>
+                            <div class="loss-unit">dBm</div>
+                        </div>
+                        <i class="fas fa-fiber" style="color: var(--primary); font-size: 1.8rem;"></i>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="coupler-table-container">
+                <table class="coupler-table">
+                    <thead>
+                        <tr>
+                            <th>Coupler Type</th>
+                            <th>Port A Loss (dB)</th>
+                            <th>Port B Loss (dB)</th>
+                        </tr>
+                    </thead>
+                    <tbody id="coupler-table-body">
+                        <!-- Table rows will be populated by JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+            
+            <div class="footer">
+                <p>THIRU GROUP &copy; 2023 | Fiber Optic Tools</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Fiber Optic Coupler data from the image
+        const couplerData = [
+            { type: "50/50 Coupler", lossA: 3.2, lossB: 3.2 },
+            { type: "10/90 Coupler", lossA: 10, lossB: 0.66 },
+            { type: "45/55 Coupler", lossA: 3.7, lossB: 2.8 },
+            { type: "05/95 Coupler", lossA: 13, lossB: 0.42 },
+            { type: "40/60 Coupler", lossA: 4.2, lossB: 2.4 },
+            { type: "1x4 Splitter", lossA: 6.5, lossB: 6.5 },
+            { type: "35/65 Coupler", lossA: 4.8, lossB: 2.1 },
+            { type: "1x8 Splitter", lossA: 9.5, lossB: 9.5 },
+            { type: "30/70 Coupler", lossA: 5.4, lossB: 1.8 },
+            { type: "1x16 Splitter", lossA: 12.5, lossB: 12.5 },
+            { type: "25/75 Coupler", lossA: 6.2, lossB: 1.5 },
+            { type: "1x32 Splitter", lossA: 15.5, lossB: 15.5 },
+            { type: "20/80 Coupler", lossA: 7.7, lossB: 1.3 },
+            { type: "1x64 Splitter", lossA: 18.5, lossB: 18.5 },
+            { type: "15/85 Coupler", lossA: 8.4, lossB: 0.91 },
+            { type: "2/98 Coupler", lossA: 17.3, lossB: 0.3 },
+            { type: "1/99 Coupler", lossA: 20.5, lossB: 0.3 },
+            { type: "1x128 Splitter", lossA: 21.5, lossB: 21.5 }
+        ];
+
+        // DOM elements
+        const couplerSelect = document.getElementById('coupler-select');
+        const inputValue = document.getElementById('input-value');
+        const portAName = document.getElementById('port-a-name');
+        const portBName = document.getElementById('port-b-name');
+        const lossA = document.getElementById('loss-a');
+        const lossB = document.getElementById('loss-b');
+        const decreaseBtn = document.getElementById('decrease-btn');
+        const increaseBtn = document.getElementById('increase-btn');
+        const tableBody = document.getElementById('coupler-table-body');
+
+        // Current state
+        let currentIndex = 0;
+
+        // Initialize the table
+        function initializeTable() {
+            tableBody.innerHTML = '';
+            couplerData.forEach((data, index) => {
+                const row = document.createElement('tr');
+                
+                // Format the display based on coupler type
+                let displayLossA = data.lossA + " dB";
+                let displayLossB = data.lossB + " dB";
+                
+                // For splitters, show single value
+                if (data.type.includes("Splitter")) {
+                    displayLossA = data.lossA + " dB";
+                    displayLossB = "-";
+                }
+                
+                row.innerHTML = `
+                    <td>${data.type}</td>
+                    <td>${displayLossA}</td>
+                    <td>${displayLossB}</td>
+                `;
+                row.addEventListener('click', () => {
+                    currentIndex = index;
+                    couplerSelect.value = index;
+                    updateDisplay();
+                });
+                tableBody.appendChild(row);
+            });
+        }
+
+        // Update port names based on coupler type
+        function updatePortNames(couplerType) {
+            if (couplerType.includes("Splitter")) {
+                portAName.textContent = "Output Port";
+                portBName.textContent = "All Ports";
+            } else {
+                const ratio = couplerType.split(" ")[0];
+                const [portA, portB] = ratio.split("/");
+                portAName.textContent = `${portA}% Port`;
+                portBName.textContent = `${portB}% Port`;
+            }
+        }
+
+        // Update the display based on current state
+        function updateDisplay() {
+            const currentData = couplerData[currentIndex];
+            
+            // Update port names
+            updatePortNames(currentData.type);
+            
+            // Get input value
+            const input = parseFloat(inputValue.value) || 0;
+            
+            // Calculate and update losses
+            const calculatedLossA = (input - currentData.lossA).toFixed(2);
+            let calculatedLossB;
+            
+            if (currentData.type.includes("Splitter")) {
+                // For splitters, Port B shows the same as Port A
+                calculatedLossB = (input - currentData.lossA).toFixed(2);
+            } else {
+                calculatedLossB = (input - currentData.lossB).toFixed(2);
+            }
+            
+            // Update display with color coding for negative values
+            updateLossDisplay(lossA, calculatedLossA);
+            updateLossDisplay(lossB, calculatedLossB);
+            
+            // Update table selection
+            const rows = tableBody.querySelectorAll('tr');
+            rows.forEach((row, index) => {
+                if (index === currentIndex) {
+                    row.classList.add('selected-row');
+                } else {
+                    row.classList.remove('selected-row');
+                }
+            });
+        }
+
+        // Update loss display with color coding for negative values
+        function updateLossDisplay(element, value) {
+            element.textContent = value;
+            if (parseFloat(value) < -25) {
+                element.classList.add('negative');
+            } else {
+                element.classList.remove('negative');
+            }
+        }
+
+        // Event listeners
+        couplerSelect.addEventListener('change', () => {
+            currentIndex = parseInt(couplerSelect.value);
+            updateDisplay();
+        });
+
+        decreaseBtn.addEventListener('click', () => {
+            inputValue.value = (parseFloat(inputValue.value) - 0.1).toFixed(1);
+            updateDisplay();
+        });
+
+        increaseBtn.addEventListener('click', () => {
+            inputValue.value = (parseFloat(inputValue.value) + 0.1).toFixed(1);
+            updateDisplay();
+        });
+
+        inputValue.addEventListener('input', updateDisplay);
+
+        // Initialize the application
+        initializeTable();
+        updateDisplay();
+    </script>
+</body>
+</html>
